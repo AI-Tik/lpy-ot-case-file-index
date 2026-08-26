@@ -1,0 +1,27 @@
+name: Bootstrap privacy-safe app
+
+on:
+  push:
+    paths:
+      - bootstrap.b64
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  bootstrap:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+      - name: Restore application source
+        run: |
+          base64 --decode bootstrap.b64 > /tmp/lpy-app.tar.gz
+          rm -f bootstrap.b64
+          tar -xzf /tmp/lpy-app.tar.gz
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A
+          git commit -m "Publish privacy-safe GitHub Pages app"
+          git push
